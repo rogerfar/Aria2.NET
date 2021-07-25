@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -6,7 +7,6 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Aria2NET.Exceptions;
-using Aria2NET.Models;
 using Newtonsoft.Json;
 
 namespace Aria2NET.Apis
@@ -24,19 +24,34 @@ namespace Aria2NET.Apis
 
         private async Task<String> Request(String method, CancellationToken cancellationToken, params Object[] parameters)
         {
-            var requestUrl = $"{_store.Aria2Url}?method={method}&id=aria2net";
+            var requestUrl = $"{_store.Aria2Url}";
 
+            var request = new Request
+            {
+                Id = "aria2net",
+                Jsonrpc = "2.0",
+                Method = method,
+                Parameters = new List<Object>()
+            };
+
+            if (!String.IsNullOrWhiteSpace(_store.Secret))
+            {
+                request.Parameters.Add($"token:{_store.Secret}");
+            }
+                
             if (parameters != null && parameters.Length > 0)
             {
-                var list = parameters.Select(entry => $"{JsonConvert.SerializeObject(entry)}").ToList();
-                var parameterString = $"[{String.Join(",", list)}]";
-
-                parameterString = Convert.ToBase64String(Encoding.UTF8.GetBytes(parameterString));
-
-                requestUrl = $"{requestUrl}&params={parameterString}";
+                foreach (var parameter in parameters.Where(m => m != null))
+                {
+                    request.Parameters.Add(parameter);
+                }
             }
 
-            var response = await _httpClient.GetAsync(requestUrl, cancellationToken);
+            var jsonRequest = JsonConvert.SerializeObject(request);
+
+            var content = new StringContent(jsonRequest);
+
+            var response = await _httpClient.PostAsync(requestUrl, content, cancellationToken);
 
             var buffer = await response.Content.ReadAsByteArrayAsync();
             var text = Encoding.UTF8.GetString(buffer, 0, buffer.Length);
@@ -92,7 +107,6 @@ namespace Aria2NET.Apis
         }
 
         public async Task<T> GetRequestAsync<T>(String url, CancellationToken cancellationToken)
-            where T : class, new()
         {
             var aria2Result = await Request<RequestResult<T>>(url, cancellationToken);
 
@@ -100,7 +114,6 @@ namespace Aria2NET.Apis
         }
 
         public async Task<T> GetRequestAsync<T>(String url, CancellationToken cancellationToken, params Object[] parameters)
-            where T : class, new()
         {
             var aria2Result = await Request<RequestResult<T>>(url, cancellationToken, parameters);
 

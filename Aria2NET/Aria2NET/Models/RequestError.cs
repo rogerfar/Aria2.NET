@@ -1,7 +1,7 @@
 ﻿using System;
 using Newtonsoft.Json;
 
-namespace Aria2NET.Models
+namespace Aria2NET
 {
     public class RequestError
     {

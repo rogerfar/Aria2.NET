@@ -8,6 +8,18 @@
 
   <ItemGroup>
     <None Remove="avatar.png" />
+    <None Remove="big-buck-bunny.torrent" />
+    <None Remove="metalink4.xml" />
+    <None Remove="openSUSE-Tumbleweed-DVD-x86_64-Snapshot20210723-Media.iso.meta4" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="big-buck-bunny.torrent">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="metalink4.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 
   <ItemGroup>
