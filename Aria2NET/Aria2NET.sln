@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29926.136
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Aria2NET", "Aria2NET\Aria2NET.csproj", "{C389A854-44F6-4158-9294-A6839D8248EF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Aria2NET.Test", "Aria2NET.Test\Aria2NET.Test.csproj", "{D26FAE24-95A5-4E5C-9D90-AA185CEF7B01}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{C389A854-44F6-4158-9294-A6839D8248EF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C389A854-44F6-4158-9294-A6839D8248EF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C389A854-44F6-4158-9294-A6839D8248EF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C389A854-44F6-4158-9294-A6839D8248EF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D26FAE24-95A5-4E5C-9D90-AA185CEF7B01}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D26FAE24-95A5-4E5C-9D90-AA185CEF7B01}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D26FAE24-95A5-4E5C-9D90-AA185CEF7B01}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D26FAE24-95A5-4E5C-9D90-AA185CEF7B01}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {13497924-8D4F-452D-8519-9D68B8C82717}
+	EndGlobalSection
+EndGlobal

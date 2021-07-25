@@ -1,0 +1,5 @@
+Aria2NET/.vs
+**/bin
+**/obj
+Aria2NET/Aria2NET.Test/secret.txt
+Aria2NET/publish.bat
