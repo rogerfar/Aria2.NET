@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using Newtonsoft.Json;
 
-namespace Aria2NET.Models
+namespace Aria2NET
 {
     public class VersionResult
     {

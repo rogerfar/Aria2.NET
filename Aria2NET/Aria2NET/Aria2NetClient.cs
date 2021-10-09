@@ -4,7 +4,6 @@ using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using Aria2NET.Apis;
-using Aria2NET.Models;
 
 namespace Aria2NET
 {
@@ -280,6 +279,248 @@ namespace Aria2NET
         public async Task<IList<FileResult>> GetFiles(String gid, CancellationToken cancellationToken = default)
         {
             return await _requests.GetRequestAsync<List<FileResult>>("aria2.getFiles", cancellationToken, gid);
+        }
+
+        /// <summary>
+        ///     This method returns a list peers of the download denoted by gid (string). This method is for BitTorrent only. The
+        ///     response is an array of structs and contains the following keys. Values are strings.
+        /// </summary>
+        /// <param name="gid">The GID of the download.</param>
+        /// <param name="cancellationToken"></param>
+        /// <returns>A list of files.</returns>
+        public async Task<IList<PeerResult>> GetPeers(String gid, CancellationToken cancellationToken = default)
+        {
+            return await _requests.GetRequestAsync<List<PeerResult>>("aria2.getPeers", cancellationToken, gid);
+        }
+
+        /// <summary>
+        ///     This method returns currently connected HTTP(S)/FTP/SFTP servers of the download denoted by gid (string). The
+        ///     response is an array of structs and contains the following keys. Values are strings.
+        /// </summary>
+        /// <param name="gid">The GID of the download.</param>
+        /// <param name="cancellationToken"></param>
+        /// <returns>A list of files.</returns>
+        public async Task<IList<ServerResult>> GetServers(String gid, CancellationToken cancellationToken = default)
+        {
+            return await _requests.GetRequestAsync<List<ServerResult>>("aria2.getServers", cancellationToken, gid);
+        }
+
+        /// <summary>
+        ///     This method changes the position of the download denoted by gid in the queue. pos is an integer. how is a string.
+        ///     If how is POS_SET, it moves the download to a position relative to the beginning of the queue. If how is POS_CUR,
+        ///     it moves the download to a position relative to the current position. If how is POS_END, it moves the download to a
+        ///     position relative to the end of the queue. If the destination position is less than 0 or beyond the end of the
+        ///     queue, it moves the download to the beginning or the end of the queue respectively. The response is an integer
+        ///     denoting the resulting position.
+        /// </summary>
+        /// <param name="gid">The GID of the download.</param>
+        /// <param name="pos">The new position.</param>
+        /// <param name="how">The method of setting the new position.</param>
+        /// <param name="cancellationToken"></param>
+        /// <returns>The new position of the download in the queue.</returns>
+        public async Task<Int32> ChangePosition(String gid, Int32 pos, ChangePositionHow how, CancellationToken cancellationToken = default)
+        {
+            var howString = how switch
+            {
+                ChangePositionHow.FromCurrent => "POS_SET",
+                ChangePositionHow.FromEnd => "POS_CUR",
+                _ => "POS_END"
+            };
+
+            return await _requests.GetRequestAsync<Int32>("aria2.changePosition", cancellationToken, gid, pos, howString);
+        }
+
+        public async Task<IList<String>> tellActive(CancellationToken cancellationToken = default)
+        {
+            return await _requests.GetRequestAsync<List<String>>("aria2.tellActive", cancellationToken);
+        }
+
+        public async Task<IList<String>> tellWaiting(CancellationToken cancellationToken = default)
+        {
+            return await _requests.GetRequestAsync<List<String>>("aria2.tellWaiting", cancellationToken);
+        }
+
+        public async Task<IList<String>> tellStopped(CancellationToken cancellationToken = default)
+        {
+            return await _requests.GetRequestAsync<List<String>>("aria2.tellStopped", cancellationToken);
+        }
+
+        /// <summary>
+        ///     This method returns options of the download denoted by gid. The response is a struct where keys are the names of
+        ///     options. The values are strings. Note that this method does not return options which have no default value and have
+        ///     not been set on the command-line, in configuration files or RPC methods.
+        /// </summary>
+        /// <param name="gid">The GID of the download.</param>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+        public async Task<IDictionary<String, String>> GetOption(String gid, CancellationToken cancellationToken = default)
+        {
+            return await _requests.GetRequestAsync<Dictionary<String, String>>("aria2.getOption", cancellationToken, gid);
+        }
+
+        /// <summary>
+        ///     This method removes the URIs in delUris from and appends the URIs in addUris to download denoted by gid. delUris
+        ///     and addUris are lists of strings. A download can contain multiple files and URIs are attached to each file.
+        ///     fileIndex is used to select which file to remove/attach given URIs. fileIndex is 1-based. position is used to
+        ///     specify where URIs are inserted in the existing waiting URI list. position is 0-based. When position is omitted,
+        ///     URIs are appended to the back of the list. This method first executes the removal and then the addition. position
+        ///     is the position after URIs are removed, not the position when this method is called. When removing an URI, if the
+        ///     same URIs exist in download, only one of them is removed for each URI in delUris. In other words, if there are
+        ///     three URIs http://example.org/aria2 and you want remove them all, you have to specify (at least) 3
+        ///     http://example.org/aria2 in delUris. This method returns a list which contains two integers. The first integer is
+        ///     the number of URIs deleted. The second integer is the number of URIs added.
+        /// </summary>
+        /// <param name="gid">The GID of the download.</param>
+        /// <param name="fileIndex">The index of the download to change the URL's for.</param>
+        /// <param name="delUris">A list of URI's to remove from the download.</param>
+        /// <param name="addUris">A list of URI's to add to the download.</param>
+        /// <param name="position">The position of the URLs.</param>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+        public async Task<IList<String>> ChangeUri(String gid,
+                                                   Int32 fileIndex,
+                                                   IList<String> delUris,
+                                                   IList<String> addUris,
+                                                   Int32? position = null,
+                                                   CancellationToken cancellationToken = default)
+        {
+            return await _requests.GetRequestAsync<List<String>>("aria2.changeUri", cancellationToken, gid, fileIndex, delUris, addUris, position);
+        }
+
+        /// <summary>
+        ///     This method changes options of the download denoted by gid (string) dynamically. options is a struct. The options
+        ///     listed in Input File subsection are available, except for following options:
+        ///     dry-run
+        ///     metalink-base-uri
+        ///     parameterized-uri
+        ///     pause
+        ///     piece-length
+        ///     rpc-save-upload-metadata
+        ///     Except for the following options, changing the other options of active download makes it restart (restart itself is
+        ///     managed by aria2, and no user intervention is required):
+        ///     bt-max-peers
+        ///     bt-request-peer-speed-limit
+        ///     bt-remove-unselected-file
+        ///     force-save
+        ///     max-download-limit
+        ///     max-upload-limit
+        /// </summary>
+        /// <param name="gid">The GID of the download.</param>
+        /// <param name="options">
+        ///     The options to change.
+        /// </param>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+        public async Task ChangeOption(String gid, IDictionary<String, String> options, CancellationToken cancellationToken = default)
+        {
+            await _requests.GetRequestAsync("aria2.changeOption", cancellationToken, gid, options);
+        }
+
+        /// <summary>
+        ///     This method returns the global options. The response is a struct. Its keys are the names of options. Values are
+        ///     strings. Note that this method does not return options which have no default value and have not been set on the
+        ///     command-line, in configuration files or RPC methods. Because global options are used as a template for the options
+        ///     of newly added downloads, the response contains keys returned by the aria2.getOption() method.
+        /// </summary>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+        public async Task<IDictionary<String, String>> GetGlobalOption(CancellationToken cancellationToken = default)
+        {
+            return await _requests.GetRequestAsync<Dictionary<String, String>>("aria2.getGlobalOption", cancellationToken);
+        }
+
+        /// <summary>
+        ///     This method changes global options dynamically. options is a struct. The following options are available:
+        ///     bt-max-open-files
+        ///     download-result
+        ///     keep-unfinished-download-result
+        ///     log
+        ///     log-level
+        ///     max-concurrent-downloads
+        ///     max-download-result
+        ///     max-overall-download-limit
+        ///     max-overall-upload-limit
+        ///     optimize-concurrent-downloads
+        ///     save-cookies
+        ///     save-session
+        ///     server-stat-of
+        ///     In addition, options listed in the Input File subsection are available, except for following options: checksum,
+        ///     index-out, out, pause and select-file.
+        ///     With the log option, you can dynamically start logging or change log file. To stop logging, specify an empty
+        ///     string("") as the parameter value. Note that log file is always opened in append mode.
+        /// </summary>
+        /// <param name="options">The options to change.</param>
+        /// <param name="cancellationToken"></param>
+        public async Task ChangeGlobalOption(IDictionary<String, String> options, CancellationToken cancellationToken = default)
+        {
+            await _requests.GetRequestAsync("aria2.changeGlobalOption", cancellationToken, options);
+        }
+
+        /// <summary>
+        ///     This method purges completed/error/removed downloads to free memory.
+        /// </summary>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+        public async Task PurgeDownloadResult(CancellationToken cancellationToken = default)
+        {
+            await _requests.GetRequestAsync("aria2.purgeDownloadResult", cancellationToken);
+        }
+
+        /// <summary>
+        ///     This method removes a completed/error/removed download denoted by gid from memory.
+        /// </summary>
+        /// <param name="gid">The GID of the download.</param>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+        public async Task<IList<String>> RemoveDownloadResult(String gid, CancellationToken cancellationToken = default)
+        {
+            return await _requests.GetRequestAsync<List<String>>("aria2.removeDownloadResult", cancellationToken, gid);
+        }
+
+        public async Task<SessionResult> GetSessionInfo(CancellationToken cancellationToken = default)
+        {
+            return await _requests.GetRequestAsync<SessionResult>("aria2.getSessionInfo", cancellationToken);
+        }
+
+        /// <summary>
+        ///     This method shuts down aria2.
+        /// </summary>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+        public async Task Shutdown(CancellationToken cancellationToken = default)
+        {
+            await _requests.GetRequestAsync("aria2.shutdown", cancellationToken);
+        }
+
+        /// <summary>
+        ///     This method shuts down aria2(). This method behaves like :func:'aria2.shutdown` without performing any actions
+        ///     which take time, such as contacting BitTorrent trackers to unregister downloads first.
+        /// </summary>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+        public async Task ForceShutdown(CancellationToken cancellationToken = default)
+        {
+            await _requests.GetRequestAsync("aria2.forceShutdown", cancellationToken);
+        }
+
+        /// <summary>
+        ///     This method returns global statistics such as the overall download and upload speeds.
+        /// </summary>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+        public async Task<GlobalStatResult> GetGlobalStat(CancellationToken cancellationToken = default)
+        {
+            return await _requests.GetRequestAsync<GlobalStatResult>("aria2.getGlobalStat", cancellationToken);
+        }
+
+        /// <summary>
+        ///     This method saves the current session to a file specified by the --save-session option.
+        /// </summary>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+        public async Task<IList<String>> SaveSession(CancellationToken cancellationToken = default)
+        {
+            return await _requests.GetRequestAsync<List<String>>("aria2.saveSession", cancellationToken);
         }
     }
 }
