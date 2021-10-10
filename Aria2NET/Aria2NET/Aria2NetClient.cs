@@ -330,17 +330,17 @@ namespace Aria2NET
             return await _requests.GetRequestAsync<Int32>("aria2.changePosition", cancellationToken, gid, pos, howString);
         }
 
-        public async Task<IList<String>> tellActive(CancellationToken cancellationToken = default)
+        public async Task<IList<String>> TellActive(CancellationToken cancellationToken = default)
         {
             return await _requests.GetRequestAsync<List<String>>("aria2.tellActive", cancellationToken);
         }
 
-        public async Task<IList<String>> tellWaiting(CancellationToken cancellationToken = default)
+        public async Task<IList<String>> TellWaiting(CancellationToken cancellationToken = default)
         {
             return await _requests.GetRequestAsync<List<String>>("aria2.tellWaiting", cancellationToken);
         }
 
-        public async Task<IList<String>> tellStopped(CancellationToken cancellationToken = default)
+        public async Task<IList<String>> TellStopped(CancellationToken cancellationToken = default)
         {
             return await _requests.GetRequestAsync<List<String>>("aria2.tellStopped", cancellationToken);
         }
@@ -472,9 +472,9 @@ namespace Aria2NET
         /// <param name="gid">The GID of the download.</param>
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
-        public async Task<IList<String>> RemoveDownloadResult(String gid, CancellationToken cancellationToken = default)
+        public async Task RemoveDownloadResult(String gid, CancellationToken cancellationToken = default)
         {
-            return await _requests.GetRequestAsync<List<String>>("aria2.removeDownloadResult", cancellationToken, gid);
+            await _requests.GetRequestAsync("aria2.removeDownloadResult", cancellationToken, gid);
         }
 
         public async Task<SessionResult> GetSessionInfo(CancellationToken cancellationToken = default)
