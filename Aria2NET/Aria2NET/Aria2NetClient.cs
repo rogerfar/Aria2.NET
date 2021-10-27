@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using Aria2NET.Apis;
+using Newtonsoft.Json;
 
 namespace Aria2NET
 {
@@ -330,21 +332,68 @@ namespace Aria2NET
             return await _requests.GetRequestAsync<Int32>("aria2.changePosition", cancellationToken, gid, pos, howString);
         }
 
-        public async Task<IList<String>> TellActive(CancellationToken cancellationToken = default)
+        /// <summary>
+        ///     This method returns a list of active downloads. The response is an array of the same structs as returned by the
+        ///     aria2.tellStatus() method.
+        /// </summary>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+        public async Task<IList<DownloadStatusResult>> TellActive(CancellationToken cancellationToken = default)
         {
-            return await _requests.GetRequestAsync<List<String>>("aria2.tellActive", cancellationToken);
+            return await _requests.GetRequestAsync<List<DownloadStatusResult>>("aria2.tellActive", cancellationToken);
         }
 
-        public async Task<IList<String>> TellWaiting(CancellationToken cancellationToken = default)
+        /// <summary>
+        ///     This method returns a list of waiting downloads, including paused ones. offset is an integer and specifies the
+        ///     offset from the download waiting at the front. num is an integer and specifies the max. number of downloads to be
+        ///     returned. For the keys parameter, please refer to the aria2.tellStatus() method.
+        ///     If offset is a positive integer, this method returns downloads in the range of [offset, offset + num).
+        ///     offset can be a negative integer. offset == -1 points last download in the waiting queue and offset == -2 points
+        ///     the download before the last download, and so on. Downloads in the response are in reversed order then.
+        /// </summary>
+        /// <param name="offset"></param>
+        /// <param name="num"></param>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+        public async Task<IList<DownloadStatusResult>> TellWaiting(Int32 offset, Int32 num, CancellationToken cancellationToken = default)
         {
-            return await _requests.GetRequestAsync<List<String>>("aria2.tellWaiting", cancellationToken);
+            return await _requests.GetRequestAsync<List<DownloadStatusResult>>("aria2.tellWaiting", cancellationToken, offset, num);
         }
 
-        public async Task<IList<String>> TellStopped(CancellationToken cancellationToken = default)
+        /// <summary>
+        ///     This method returns a list of stopped downloads. offset is an integer and specifies the offset from the least
+        ///     recently stopped download. num is an integer and specifies the max. number of downloads to be returned. For the
+        ///     keys parameter, please refer to the aria2.tellStatus() method. offset and num have the same semantics as described
+        ///     in the aria2.tellWaiting() method.
+        /// </summary>
+        /// <param name="offset"></param>
+        /// <param name="num"></param>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+        public async Task<IList<DownloadStatusResult>> TellStopped(Int32 offset, Int32 num, CancellationToken cancellationToken = default)
         {
-            return await _requests.GetRequestAsync<List<String>>("aria2.tellStopped", cancellationToken);
+            return await _requests.GetRequestAsync<List<DownloadStatusResult>>("aria2.tellStopped", cancellationToken, offset, num);
         }
 
+        /// <summary>
+        ///     This method returns a list of the all active, the first 1000 stopped and first 1000 waiting downloads.
+        /// </summary>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+        public async Task<IList<DownloadStatusResult>> TellAll(CancellationToken cancellationToken = default)
+        {
+            var results = await _requests.MultiRequestAsync(cancellationToken, 
+                                                            new Object[] { "aria2.tellStopped", 0, 1000 },
+                                                            new Object[] { "aria2.tellWaiting", 0, 1000 },
+                                                            new Object[] { "aria2.tellActive" });
+
+            var results1 = JsonConvert.DeserializeObject<List<DownloadStatusResult>>(results[0].ToString()) ?? new List<DownloadStatusResult>();
+            var results2 = JsonConvert.DeserializeObject<List<DownloadStatusResult>>(results[1].ToString()) ?? new List<DownloadStatusResult>();
+            var results3 = JsonConvert.DeserializeObject<List<DownloadStatusResult>>(results[2].ToString()) ?? new List<DownloadStatusResult>();
+            
+            return results1.Concat(results2).Concat(results3).ToList();
+        }
+        
         /// <summary>
         ///     This method returns options of the download denoted by gid. The response is a struct where keys are the names of
         ///     options. The values are strings. Note that this method does not return options which have no default value and have

@@ -101,6 +101,46 @@ namespace Aria2NET.Test
 
             Assert.NotNull(result);
         }
+
+        [Fact]
+        public async Task TellActive()
+        {
+            var client = new Aria2NetClient(Setup.URL, Setup.Secret);
+
+            var result = await client.TellActive();
+
+            Assert.NotNull(result);
+        }
+
+        [Fact]
+        public async Task TellStopped()
+        {
+            var client = new Aria2NetClient(Setup.URL, Setup.Secret);
+
+            var result = await client.TellStopped(0, 1000);
+
+            Assert.NotNull(result);
+        }
+
+        [Fact]
+        public async Task TellWaiting()
+        {
+            var client = new Aria2NetClient(Setup.URL, Setup.Secret);
+
+            var result = await client.TellWaiting(0, 1000);
+
+            Assert.NotNull(result);
+        }
+
+        [Fact]
+        public async Task TellAll()
+        {
+            var client = new Aria2NetClient(Setup.URL, Setup.Secret);
+
+            var result = await client.TellAll();
+
+            Assert.NotNull(result);
+        }
         
         [Fact]
         public async Task GetUris()

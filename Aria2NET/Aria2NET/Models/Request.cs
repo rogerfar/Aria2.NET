@@ -18,4 +18,13 @@ namespace Aria2NET
         [JsonProperty("params")]
         public IList<Object> Parameters { get; set; }
     }
+
+    public class MulticallRequest
+    {
+        [JsonProperty("methodName")]
+        public String MethodName { get; set; }
+
+        [JsonProperty("params")]
+        public IList<Object> Parameters { get; set; }
+    }
 }

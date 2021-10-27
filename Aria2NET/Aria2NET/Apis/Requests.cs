@@ -22,7 +22,7 @@ namespace Aria2NET.Apis
             _store = store;
         }
 
-        private async Task<String> Request(String method, CancellationToken cancellationToken, params Object[] parameters)
+        private async Task<String> Request(String method, String secret, CancellationToken cancellationToken, params Object[] parameters)
         {
             var requestUrl = $"{_store.Aria2Url}";
 
@@ -34,9 +34,9 @@ namespace Aria2NET.Apis
                 Parameters = new List<Object>()
             };
 
-            if (!String.IsNullOrWhiteSpace(_store.Secret))
+            if (!String.IsNullOrWhiteSpace(secret))
             {
-                request.Parameters.Add($"token:{_store.Secret}");
+                request.Parameters.Add($"token:{secret}");
             }
                 
             if (parameters != null && parameters.Length > 0)
@@ -79,7 +79,7 @@ namespace Aria2NET.Apis
         private async Task<T> Request<T>(String url, CancellationToken cancellationToken, params Object[] parameters)
             where T : class, new()
         {
-            var result = await Request(url, cancellationToken, parameters);
+            var result = await Request(url, _store.Secret, cancellationToken, parameters);
 
             if (result == null)
             {
@@ -98,12 +98,12 @@ namespace Aria2NET.Apis
         
         public async Task<String> GetRequestAsync(String url, CancellationToken cancellationToken)
         {
-            return await Request(url, cancellationToken);
+            return await Request(url, _store.Secret, cancellationToken);
         }
 
         public async Task<String> GetRequestAsync(String url, CancellationToken cancellationToken, params Object[] parameters)
         {
-            return await Request(url, cancellationToken, parameters);
+            return await Request(url, _store.Secret, cancellationToken, parameters);
         }
 
         public async Task<T> GetRequestAsync<T>(String url, CancellationToken cancellationToken)
@@ -118,6 +118,39 @@ namespace Aria2NET.Apis
             var aria2Result = await Request<RequestResult<T>>(url, cancellationToken, parameters);
 
             return aria2Result.Result;
+        }
+
+        public async Task<List<Object>> MultiRequestAsync(CancellationToken cancellationToken, params Object[] parameters)
+        {
+            var parameterList = new List<MulticallRequest>();
+
+            foreach (var param in parameters)
+            {
+                if (param is not Object[] methodCall)
+                {
+                    throw new Exception($"Parameter must be of type Object[]");
+                }
+
+                var actualParameters = new List<Object>
+                {
+                    $"token:{_store.Secret}"
+                };
+                actualParameters.AddRange(methodCall.Skip(1));
+
+                var multicallRequest = new MulticallRequest
+                {
+                    MethodName = methodCall[0] as String,
+                    Parameters = actualParameters.ToList()
+                };
+
+                parameterList.Add(multicallRequest);
+            }
+
+            var requestResult = await Request("system.multicall", null, cancellationToken, parameterList);
+
+            var result = JsonConvert.DeserializeObject<RequestResult<List<List<Object>>>>(requestResult);
+
+            return result.Result.Select(m => m.First()).ToList();
         }
         
         private static Aria2Exception ParseAria2Exception(String text)
