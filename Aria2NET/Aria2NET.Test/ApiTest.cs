@@ -11,11 +11,11 @@ namespace Aria2NET.Test
         [Fact]
         public async Task GetVersion()
         {
-            var client = new Aria2NetClient(Setup.URL, Setup.Secret);
+            var client = new Aria2NetClient(Setup.URL, Setup.Secret, null, 5);
 
             var result = await client.GetVersion();
 
-            Assert.Equal("1.35.0", result.Version);
+            Assert.Equal("1.36.0", result.Version);
         }
 
         [Fact]
@@ -95,7 +95,7 @@ namespace Aria2NET.Test
         [Fact]
         public async Task TellStatus()
         {
-            var client = new Aria2NetClient(Setup.URL, Setup.Secret);
+            var client = new Aria2NetClient(Setup.URL, Setup.Secret, null, 1);
 
             var result = await client.TellStatus("a7ac79f1717e70c4");
 

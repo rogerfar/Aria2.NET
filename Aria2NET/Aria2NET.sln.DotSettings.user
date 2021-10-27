@@ -16,5 +16,7 @@
     &lt;TestId&gt;xUnit::D26FAE24-95A5-4E5C-9D90-AA185CEF7B01::.NETCoreApp,Version=v3.1::Aria2NET.Test.ApiTest.TellActive&lt;/TestId&gt;&#xD;
     &lt;TestId&gt;xUnit::D26FAE24-95A5-4E5C-9D90-AA185CEF7B01::.NETCoreApp,Version=v3.1::Aria2NET.Test.ApiTest.TellStopped&lt;/TestId&gt;&#xD;
     &lt;TestId&gt;xUnit::D26FAE24-95A5-4E5C-9D90-AA185CEF7B01::.NETCoreApp,Version=v3.1::Aria2NET.Test.ApiTest.TellAll&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;xUnit::D26FAE24-95A5-4E5C-9D90-AA185CEF7B01::.NETCoreApp,Version=v3.1::Aria2NET.Test.ApiTest.GetVersion&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;xUnit::D26FAE24-95A5-4E5C-9D90-AA185CEF7B01::.NETCoreApp,Version=v3.1::Aria2NET.Test.ApiTest.TellStatus&lt;/TestId&gt;&#xD;
   &lt;/TestAncestor&gt;&#xD;
 &lt;/SessionState&gt;</s:String></wpf:ResourceDictionary>

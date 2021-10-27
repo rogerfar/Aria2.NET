@@ -38,7 +38,7 @@ namespace Aria2NET.Apis
             {
                 request.Parameters.Add($"token:{secret}");
             }
-                
+
             if (parameters != null && parameters.Length > 0)
             {
                 foreach (var parameter in parameters.Where(m => m != null))
@@ -51,29 +51,53 @@ namespace Aria2NET.Apis
 
             var content = new StringContent(jsonRequest);
 
-            var response = await _httpClient.PostAsync(requestUrl, content, cancellationToken);
-
-            var buffer = await response.Content.ReadAsByteArrayAsync();
-            var text = Encoding.UTF8.GetString(buffer, 0, buffer.Length);
-            
-            if (response.StatusCode == HttpStatusCode.NoContent)
+            var retryCount = 0;
+            while (true)
             {
-                text = null;
-            }
-
-            if (!response.IsSuccessStatusCode)
-            {
-                var aria2Exception = ParseAria2Exception(text);
-
-                if (aria2Exception != null)
+                try
                 {
-                    throw aria2Exception;
+                    var response = await _httpClient.PostAsync(requestUrl, content, cancellationToken);
+
+                    var buffer = await response.Content.ReadAsByteArrayAsync();
+                    var text = Encoding.UTF8.GetString(buffer, 0, buffer.Length);
+
+                    if (response.StatusCode == HttpStatusCode.NoContent)
+                    {
+                        text = null;
+                    }
+
+                    if (!response.IsSuccessStatusCode)
+                    {
+                        var aria2Exception = ParseAria2Exception(text);
+
+                        if (aria2Exception != null)
+                        {
+                            throw aria2Exception;
+                        }
+
+                        throw new Exception(text);
+                    }
+
+                    return text;
                 }
+                catch (Aria2Exception)
+                {
+                    throw;
+                }
+                catch
+                {
+                    if (retryCount < _store.RetryCount)
+                    {
+                        retryCount++;
 
-                throw new Exception(text);
+                        await Task.Delay(1000 * retryCount, cancellationToken);
+                    }
+                    else
+                    {
+                        throw;
+                    }
+                }
             }
-
-            return text;
         }
         
         private async Task<T> Request<T>(String url, CancellationToken cancellationToken, params Object[] parameters)

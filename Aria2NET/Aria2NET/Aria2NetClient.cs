@@ -30,7 +30,10 @@ namespace Aria2NET
         /// <param name="httpClient">
         ///     Optional HttpClient if you want to use your own HttpClient.
         /// </param>
-        public Aria2NetClient(String aria2Url, String secret = null, HttpClient httpClient = null)
+        /// <param name="retryCount">
+        ///     Optional amount of tries a request should do before marking it as error.
+        /// </param>
+        public Aria2NetClient(String aria2Url, String secret = null, HttpClient httpClient = null, Int32 retryCount = 0)
         {
             if (!aria2Url.EndsWith("/jsonrpc"))
             {
@@ -40,10 +43,14 @@ namespace Aria2NET
             var store = new Store
             {
                 Aria2Url = aria2Url,
-                Secret = secret
+                Secret = secret,
+                RetryCount = retryCount
             };
 
-            var client = httpClient ?? new HttpClient();
+            var client = httpClient ?? new HttpClient
+            {
+                Timeout = TimeSpan.FromSeconds(5)
+            };
 
             _requests = new Requests(client, store);
         }
