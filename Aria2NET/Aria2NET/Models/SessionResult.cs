@@ -1,11 +1,10 @@
 ﻿using System;
 using Newtonsoft.Json;
 
-namespace Aria2NET
+namespace Aria2NET;
+
+public class SessionResult
 {
-    public class SessionResult
-    {
-        [JsonProperty("sessionId")]
-        public String SessionId { get; set; }
-    }
+    [JsonProperty("sessionId")]
+    public String SessionId { get; set; }
 }

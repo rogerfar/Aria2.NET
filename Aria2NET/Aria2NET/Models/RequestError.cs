@@ -1,14 +1,13 @@
 ﻿using System;
 using Newtonsoft.Json;
 
-namespace Aria2NET
-{
-    public class RequestError
-    {
-        [JsonProperty("code")]
-        public Int64 Code { get; set; }
+namespace Aria2NET;
 
-        [JsonProperty("message")]
-        public String Message { get; set; }
-    }
+public class RequestError
+{
+    [JsonProperty("code")]
+    public Int64 Code { get; set; }
+
+    [JsonProperty("message")]
+    public String Message { get; set; }
 }
