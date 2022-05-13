@@ -1,5 +1,5 @@
-Aria2NET/.vs
+.vs
 **/bin
 **/obj
-Aria2NET/Aria2NET.Test/secret.txt
-Aria2NET/publish.bat
+Aria2NET.Test/secret.txt
+publish.bat
