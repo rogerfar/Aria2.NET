@@ -1,11 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Net.Http;
+﻿using System.Net;
 using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 using Aria2NET.Exceptions;
 using Newtonsoft.Json;
 
@@ -22,7 +16,7 @@ internal class Requests
         _store = store;
     }
 
-    private async Task<String> Request(String method, String secret, CancellationToken cancellationToken, params Object[] parameters)
+    private async Task<String> Request(String method, String? secret, CancellationToken cancellationToken, params Object?[]? parameters)
     {
         var requestUrl = $"{_store.Aria2Url}";
 
@@ -31,7 +25,7 @@ internal class Requests
             Id = "aria2net",
             Jsonrpc = "2.0",
             Method = method,
-            Parameters = new List<Object>()
+            Parameters = new List<Object?>()
         };
 
         if (!String.IsNullOrWhiteSpace(secret))
@@ -59,7 +53,7 @@ internal class Requests
                 var response = await _httpClient.PostAsync(requestUrl, content, cancellationToken);
 
                 var buffer = await response.Content.ReadAsByteArrayAsync();
-                var text = Encoding.UTF8.GetString(buffer, 0, buffer.Length);
+                var text = Encoding.UTF8.GetString(buffer);
 
                 if (response.StatusCode == HttpStatusCode.NoContent)
                 {
@@ -78,7 +72,12 @@ internal class Requests
                     throw new Exception(text);
                 }
 
-                return text;
+                if (String.IsNullOrEmpty(text))
+                {
+                    throw new Exception("No response received");
+                }
+
+                return text!;
             }
             catch (Aria2Exception)
             {
@@ -100,19 +99,14 @@ internal class Requests
         }
     }
         
-    private async Task<T> Request<T>(String url, CancellationToken cancellationToken, params Object[] parameters)
+    private async Task<T> Request<T>(String url, CancellationToken cancellationToken, params Object?[] parameters)
         where T : class, new()
     {
         var result = await Request(url, _store.Secret, cancellationToken, parameters);
 
-        if (result == null)
-        {
-            return new T();
-        }
-
         try
         {
-            return JsonConvert.DeserializeObject<T>(result);
+            return JsonConvert.DeserializeObject<T>(result) ?? throw new JsonSerializationException();
         }
         catch (JsonSerializationException ex)
         {
@@ -120,31 +114,41 @@ internal class Requests
         }
     }
         
-    public async Task<String> GetRequestAsync(String url, CancellationToken cancellationToken)
+    public async Task GetRequestAsync(String url, CancellationToken cancellationToken)
     {
-        return await Request(url, _store.Secret, cancellationToken);
+        await Request(url, _store.Secret, cancellationToken);
     }
 
-    public async Task<String> GetRequestAsync(String url, CancellationToken cancellationToken, params Object[] parameters)
+    public async Task GetRequestAsync(String url, CancellationToken cancellationToken, params Object[] parameters)
     {
-        return await Request(url, _store.Secret, cancellationToken, parameters);
+        await Request(url, _store.Secret, cancellationToken, parameters);
     }
 
     public async Task<T> GetRequestAsync<T>(String url, CancellationToken cancellationToken)
     {
         var aria2Result = await Request<RequestResult<T>>(url, cancellationToken);
 
+        if (aria2Result.Result == null)
+        {
+            throw new Exception("No response data received");
+        }
+
         return aria2Result.Result;
     }
 
-    public async Task<T> GetRequestAsync<T>(String url, CancellationToken cancellationToken, params Object[] parameters)
+    public async Task<T> GetRequestAsync<T>(String url, CancellationToken cancellationToken, params Object?[] parameters)
     {
         var aria2Result = await Request<RequestResult<T>>(url, cancellationToken, parameters);
 
+        if (aria2Result.Result == null)
+        {
+            throw new Exception("No response data received");
+        }
+
         return aria2Result.Result;
     }
 
-    public async Task<List<Object>> MultiRequestAsync(CancellationToken cancellationToken, params Object[] parameters)
+    public async Task<List<Object>> MultiRequestAsync(CancellationToken cancellationToken, params Object?[] parameters)
     {
         var parameterList = new List<MulticallRequest>();
 
@@ -161,9 +165,14 @@ internal class Requests
             };
             actualParameters.AddRange(methodCall.Skip(1));
 
+            if (methodCall[0] is not String methodName)
+            {
+                throw new Exception("Invalid method name in the first object");
+            }
+
             var multicallRequest = new MulticallRequest
             {
-                MethodName = methodCall[0] as String,
+                MethodName = methodName,
                 Parameters = actualParameters.ToList()
             };
 
@@ -172,18 +181,35 @@ internal class Requests
 
         var requestResult = await Request("system.multicall", null, cancellationToken, parameterList);
 
-        var result = JsonConvert.DeserializeObject<RequestResult<List<List<Object>>>>(requestResult);
+        try
+        {
+            var result = JsonConvert.DeserializeObject<RequestResult<List<List<Object>>>>(requestResult) ?? throw new JsonSerializationException();
 
-        return result.Result.Select(m => m.First()).ToList();
+            if (result.Result == null)
+            {
+                throw new JsonSerializationException();
+            }
+
+            return result.Result.Select(m => m.First()).ToList();
+        }
+        catch (JsonSerializationException ex)
+        {
+            throw new JsonSerializationException($"Unable to deserialize Aria2 API response. Response was: {requestResult}", ex);
+        }
     }
         
-    private static Aria2Exception ParseAria2Exception(String text)
+    private static Aria2Exception? ParseAria2Exception(String? text)
     {
         try
         {
+            if (text == null)
+            {
+                return null;
+            }
+
             var requestError = JsonConvert.DeserializeObject<RequestResult<RequestError>>(text);
 
-            if (requestError != null)
+            if (requestError?.Error != null)
             {
                 return new Aria2Exception(requestError.Error.Code, requestError.Error.Message);
             }

@@ -1,5 +1,4 @@
-﻿using System;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 
 namespace Aria2NET;
 
@@ -9,11 +8,11 @@ public class UriResult
     ///     'used' if the URI is in use. 'waiting' if the URI is still waiting in the queue.
     /// </summary>
     [JsonProperty("status")]
-    public String Status { get; set; }
+    public String Status { get; set; } = null!;
 
     /// <summary>
     ///     URI
     /// </summary>
     [JsonProperty("uri")]
-    public String Uri { get; set; }
+    public String Uri { get; set; } = null!;
 }

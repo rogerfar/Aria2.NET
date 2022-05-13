@@ -1,5 +1,4 @@
-﻿using System;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 
 namespace Aria2NET;
 
@@ -17,7 +16,7 @@ public class PeerResult
     ///     are set to zero.
     /// </summary>
     [JsonProperty("bitfield")]
-    public String Bitfield { get; set; }
+    public String Bitfield { get; set; } = null!;
 
     /// <summary>
     ///     Download speed (byte/sec) that this client obtains from the peer.
@@ -29,7 +28,7 @@ public class PeerResult
     ///     IP address of the peer.
     /// </summary>
     [JsonProperty("ip")]
-    public String Ip { get; set; }
+    public String Ip { get; set; } = null!;
 
     /// <summary>
     ///     true if the peer is choking aria2. Otherwise false.
@@ -41,7 +40,7 @@ public class PeerResult
     ///     Percent-encoded peer ID.
     /// </summary>
     [JsonProperty("peerId")]
-    public String PeerId { get; set; }
+    public String PeerId { get; set; } = null!;
 
     /// <summary>
     ///     Port number of the peer.

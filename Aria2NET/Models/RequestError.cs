@@ -1,5 +1,4 @@
-﻿using System;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 
 namespace Aria2NET;
 
@@ -9,5 +8,5 @@ public class RequestError
     public Int64 Code { get; set; }
 
     [JsonProperty("message")]
-    public String Message { get; set; }
+    public String? Message { get; set; }
 }

@@ -13,7 +13,7 @@ namespace Aria2NET.Test
         {
             var client = new Aria2NetClient(Setup.URL, Setup.Secret, null, 5);
 
-            var result = await client.GetVersion();
+            var result = await client.GetVersionAsync();
 
             Assert.Equal("1.36.0", result.Version);
         }
@@ -23,14 +23,14 @@ namespace Aria2NET.Test
         {
             var client = new Aria2NetClient(Setup.URL, Setup.Secret);
 
-            var result = await client.AddUri(new List<String>
-                                {
-                                    "https://speed.hetzner.de/1GB.bin"
-                                },
-                                new Dictionary<String, Object>
-                                {
-                                    { "dir", "C:/Temp"}
-                                }, 0);
+            var result = await client.AddUriAsync(new List<String>
+                                                  {
+                                                      "https://speed.hetzner.de/1GB.bin"
+                                                  },
+                                                  new Dictionary<String, Object>
+                                                  {
+                                                      { "dir", "C:/Temp"}
+                                                  }, 0);
 
             Assert.NotNull(result);
         }
@@ -44,12 +44,12 @@ namespace Aria2NET.Test
 
             var file = await File.ReadAllBytesAsync(filePath);
 
-            var result = await client.AddTorrent(file, 
-                                    null,
-                                    new Dictionary<String, Object>
-                                    {
-                                        { "dir", "C:/Temp"}
-                                    }, 0);
+            var result = await client.AddTorrentAsync(file, 
+                                                      null,
+                                                      new Dictionary<String, Object>
+                                                      {
+                                                          { "dir", "C:/Temp"}
+                                                      }, 0);
 
             Assert.NotNull(result);
         }
@@ -63,11 +63,11 @@ namespace Aria2NET.Test
 
             var file = await File.ReadAllBytesAsync(filePath);
 
-            var result = await client.AddMetalink(file, 
-                                                  new Dictionary<String, Object>
-                                                  {
-                                                      { "dir", "C:/Temp"}
-                                                  }, 0);
+            var result = await client.AddMetalinkAsync(file, 
+                                                       new Dictionary<String, Object>
+                                                       {
+                                                           { "dir", "C:/Temp"}
+                                                       }, 0);
 
             Assert.NotNull(result);
         }
@@ -77,7 +77,7 @@ namespace Aria2NET.Test
         {
             var client = new Aria2NetClient(Setup.URL, Setup.Secret);
 
-            var result = await client.Remove("fe63a1c15db1a244");
+            var result = await client.RemoveAsync("fe63a1c15db1a244");
 
             Assert.NotNull(result);
         }
@@ -87,7 +87,7 @@ namespace Aria2NET.Test
         {
             var client = new Aria2NetClient(Setup.URL, Setup.Secret);
 
-            var result = await client.ForceRemove("fe63a1c15db1a244");
+            var result = await client.ForceRemoveAsync("fe63a1c15db1a244");
 
             Assert.NotNull(result);
         }
@@ -97,7 +97,7 @@ namespace Aria2NET.Test
         {
             var client = new Aria2NetClient(Setup.URL, Setup.Secret, null, 1);
 
-            var result = await client.TellStatus("a7ac79f1717e70c4");
+            var result = await client.TellStatusAsync("a7ac79f1717e70c4");
 
             Assert.NotNull(result);
         }
@@ -107,7 +107,7 @@ namespace Aria2NET.Test
         {
             var client = new Aria2NetClient(Setup.URL, Setup.Secret);
 
-            var result = await client.TellActive();
+            var result = await client.TellActiveAsync();
 
             Assert.NotNull(result);
         }
@@ -117,7 +117,7 @@ namespace Aria2NET.Test
         {
             var client = new Aria2NetClient(Setup.URL, Setup.Secret);
 
-            var result = await client.TellStopped(0, 1000);
+            var result = await client.TellStoppedAsync(0, 1000);
 
             Assert.NotNull(result);
         }
@@ -127,7 +127,7 @@ namespace Aria2NET.Test
         {
             var client = new Aria2NetClient(Setup.URL, Setup.Secret);
 
-            var result = await client.TellWaiting(0, 1000);
+            var result = await client.TellWaitingAsync(0, 1000);
 
             Assert.NotNull(result);
         }
@@ -137,7 +137,7 @@ namespace Aria2NET.Test
         {
             var client = new Aria2NetClient(Setup.URL, Setup.Secret);
 
-            var result = await client.TellAll();
+            var result = await client.TellAllAsync();
 
             Assert.NotNull(result);
         }
@@ -147,7 +147,7 @@ namespace Aria2NET.Test
         {
             var client = new Aria2NetClient(Setup.URL, Setup.Secret);
 
-            var result = await client.GetUris("8513206cea07bd3c");
+            var result = await client.GetUrisAsync("8513206cea07bd3c");
 
             Assert.NotNull(result);
         }
@@ -157,7 +157,7 @@ namespace Aria2NET.Test
         {
             var client = new Aria2NetClient(Setup.URL, Setup.Secret);
 
-            var result = await client.GetFiles("8513206cea07bd3c");
+            var result = await client.GetFilesAsync("8513206cea07bd3c");
 
             Assert.NotNull(result);
         }
@@ -167,7 +167,7 @@ namespace Aria2NET.Test
         {
             var client = new Aria2NetClient(Setup.URL, Setup.Secret);
 
-            var result = await client.GetPeers("d13f0b120af20416");
+            var result = await client.GetPeersAsync("d13f0b120af20416");
 
             Assert.NotNull(result);
         }
@@ -177,7 +177,7 @@ namespace Aria2NET.Test
         {
             var client = new Aria2NetClient(Setup.URL, Setup.Secret);
 
-            var result = await client.GetServers("a6e32d335684191a");
+            var result = await client.GetServersAsync("a6e32d335684191a");
 
             Assert.NotNull(result);
         }
@@ -187,7 +187,7 @@ namespace Aria2NET.Test
         {
             var client = new Aria2NetClient(Setup.URL, Setup.Secret);
 
-            var result = await client.GetGlobalOption();
+            var result = await client.GetGlobalOptionAsync();
 
             Assert.NotNull(result);
         }
@@ -197,7 +197,7 @@ namespace Aria2NET.Test
         {
             var client = new Aria2NetClient(Setup.URL, Setup.Secret);
 
-            await client.ChangeGlobalOption(new Dictionary<String, String>
+            await client.ChangeGlobalOptionAsync(new Dictionary<String, String>
             {
                 {"bt-max-peers", "60"}
             });
@@ -218,7 +218,7 @@ namespace Aria2NET.Test
         {
             var client = new Aria2NetClient(Setup.URL, Setup.Secret);
 
-            var globalStats = await client.GetGlobalStat();
+            var globalStats = await client.GetGlobalStatAsync();
 
             Assert.NotNull(globalStats);
         }

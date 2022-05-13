@@ -1,19 +1,18 @@
-﻿using System;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 
 namespace Aria2NET;
 
 public class RequestResult<T>
 {
     [JsonProperty("id")]
-    public String Id { get; set; }
+    public String Id { get; set; } = null!;
 
     [JsonProperty("jsonrpc")]
-    public String Jsonrpc { get; set; }
+    public String Jsonrpc { get; set; } = null!;
 
     [JsonProperty("result")]
-    public T Result { get; set; }
+    public T? Result { get; set; }
 
     [JsonProperty("error")]
-    public RequestError Error { get; set; }
+    public RequestError? Error { get; set; }
 }

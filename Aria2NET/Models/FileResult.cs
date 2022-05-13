@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 
 namespace Aria2NET;
 
@@ -31,7 +29,7 @@ public class FileResult
     ///     File path.
     /// </summary>
     [JsonProperty("path")]
-    public String Path { get; set; }
+    public String Path { get; set; } = null!;
 
     /// <summary>
     ///     true if this file is selected by --select-file option. If --select-file is not specified or this is single-file
@@ -44,5 +42,5 @@ public class FileResult
     ///     Returns a list of URIs for this file. The element type is the same struct used in the aria2.getUris() method.
     /// </summary>
     [JsonProperty("uris")]
-    public List<UriResult> Uris { get; set; }
+    public List<UriResult> Uris { get; set; } = new List<UriResult>();
 }

@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 
 namespace Aria2NET;
 
@@ -12,13 +10,13 @@ public class DownloadStatusResult
     ///     the end are set to zero. When the download was not started yet, this key will not be included in the response.
     /// </summary>
     [JsonProperty("bitfield")]
-    public String Bitfield { get; set; }
+    public String Bitfield { get; set; } = null!;
 
     /// <summary>
     ///     Struct which contains information retrieved from the .torrent (file). BitTorrent only. It contains following keys.
     /// </summary>
     [JsonProperty("bittorrent")]
-    public DownloadStatusBittorrent Bittorrent { get; set; }
+    public DownloadStatusBittorrent? Bittorrent { get; set; }
 
     /// <summary>
     ///     Completed length of the download in bytes.
@@ -36,7 +34,7 @@ public class DownloadStatusResult
     ///     Directory to save files.
     /// </summary>
     [JsonProperty("dir")]
-    public String Dir { get; set; }
+    public String Dir { get; set; } = null!;
 
     /// <summary>
     ///     Download speed of this download measured in bytes/sec.
@@ -48,31 +46,31 @@ public class DownloadStatusResult
     ///     Returns the list of files. The elements of this list are the same structs used in aria2.getFiles() method.
     /// </summary>
     [JsonProperty("files")]
-    public List<DownloadStatusFile> Files { get; set; }
+    public List<DownloadStatusFile> Files { get; set; } = new List<DownloadStatusFile>();
 
     /// <summary>
     ///     GID of the download.
     /// </summary>
     [JsonProperty("gid")]
-    public String Gid { get; set; }
+    public String Gid { get; set; } = null!;
 
     /// <summary>
     ///     InfoHash. BitTorrent only.
     /// </summary>
     [JsonProperty("infoHash")]
-    public String InfoHash { get; set; }
+    public String? InfoHash { get; set; }
 
     /// <summary>
     ///     The number of pieces.
     /// </summary>
     [JsonProperty("numPieces")]
-    public Int64 NumPieces { get; set; }
+    public Int64? NumPieces { get; set; }
 
     /// <summary>
     ///     The number of seeders aria2 has connected to. BitTorrent only.
     /// </summary>
     [JsonProperty("numSeeders")]
-    public Int64 NumSeeders { get; set; }
+    public Int64? NumSeeders { get; set; }
 
     /// <summary>
     ///     Piece length in bytes.
@@ -84,7 +82,7 @@ public class DownloadStatusResult
     ///     true if the local endpoint is a seeder. Otherwise false. BitTorrent only.
     /// </summary>
     [JsonProperty("seeder")]
-    public Boolean Seeder { get; set; }
+    public Boolean? Seeder { get; set; }
 
     /// <summary>
     ///     active for currently downloading/seeding downloads. waiting for downloads in the queue; download is not started.
@@ -92,7 +90,7 @@ public class DownloadStatusResult
     ///     completed downloads. removed for the downloads removed by user.
     /// </summary>
     [JsonProperty("status")]
-    public String Status { get; set; }
+    public String Status { get; set; } = null!;
 
     /// <summary>
     ///     Total length of the download in bytes.
@@ -117,13 +115,13 @@ public class DownloadStatusResult
     ///     STATUS section. This value is only available for stopped/completed downloads.
     /// </summary>
     [JsonProperty("errorCode")]
-    public String ErrorCode { get; set; }
+    public String? ErrorCode { get; set; }
 
     /// <summary>
     ///     The (hopefully) human readable error message associated to errorCode.
     /// </summary>
     [JsonProperty("errorMessage")]
-    public String ErrorMessage { get; set; }
+    public String? ErrorMessage { get; set; }
 
     /// <summary>
     ///     GID of a parent download. Some downloads are a part of another download. For example, if a file in a Metalink has
@@ -131,7 +129,7 @@ public class DownloadStatusResult
     ///     this key will not be included in the response.
     /// </summary>
     [JsonProperty("belongsTo")]
-    public String BelongsTo { get; set; }
+    public String? BelongsTo { get; set; }
 
     /// <summary>
     ///     List of GIDs which are generated as the result of this download. For example, when aria2 downloads a Metalink file,
@@ -139,13 +137,13 @@ public class DownloadStatusResult
     ///     auto-generated downloads. If there are no such downloads, this key will not be included in the response.
     /// </summary>
     [JsonProperty("followedBy")]
-    public List<String> FollowedBy { get; set; }
+    public List<String>? FollowedBy { get; set; }
 
     /// <summary>
     ///     The reverse link for followedBy. A download included in followedBy has this object's GID in its following value.
     /// </summary>
     [JsonProperty("following")]
-    public String Following { get; set; }
+    public String? Following { get; set; }
 }
 
 public class DownloadStatusBittorrent
@@ -155,13 +153,13 @@ public class DownloadStatusBittorrent
     ///     announce-list format.
     /// </summary>
     [JsonProperty("announceList")]
-    public List<List<String>> AnnounceList { get; set; }
+    public List<List<String>> AnnounceList { get; set; } = new List<List<String>>();
 
     /// <summary>
     ///     The comment of the torrent. comment.utf-8 is used if available.
     /// </summary>
     [JsonProperty("comment")]
-    public String Comment { get; set; }
+    public String? Comment { get; set; }
 
     /// <summary>
     ///     The creation time of the torrent. The value is an integer since the epoch, measured in seconds.
@@ -173,13 +171,13 @@ public class DownloadStatusBittorrent
     ///     Struct which contains data from Info dictionary. It contains following keys.
     /// </summary>
     [JsonProperty("info")]
-    public DownloadStatusBittorrentInfo Info { get; set; }
+    public DownloadStatusBittorrentInfo? Info { get; set; }
 
     /// <summary>
     ///     File mode of the torrent. The value is either single or multi.
     /// </summary>
     [JsonProperty("mode")]
-    public String Mode { get; set; }
+    public String Mode { get; set; } = null!;
 
     /// <summary>
     ///     The number of verified number of bytes while the files are being hash checked. This key exists only when this
@@ -202,7 +200,7 @@ public class DownloadStatusBittorrentInfo
     ///     name in info dictionary. name.utf-8 is used if available.
     /// </summary>
     [JsonProperty("name")]
-    public String Name { get; set; }
+    public String Name { get; set; } = null!;
 }
 
 public class DownloadStatusFile
@@ -217,20 +215,20 @@ public class DownloadStatusFile
     public Int64 Length { get; set; }
 
     [JsonProperty("path")]
-    public String Path { get; set; }
+    public String Path { get; set; } = null!;
 
     [JsonProperty("selected")]
     public Boolean Selected { get; set; }
 
     [JsonProperty("uris")]
-    public List<DownloadStatusFileUri> Uris { get; set; }
+    public List<DownloadStatusFileUri> Uris { get; set; } = new List<DownloadStatusFileUri>();
 }
 
 public class DownloadStatusFileUri
 {
     [JsonProperty("status")]
-    public String Status { get; set; }
+    public String Status { get; set; } = null!;
 
     [JsonProperty("uri")]
-    public String Uri { get; set; }
+    public String Uri { get; set; } = null!;
 }

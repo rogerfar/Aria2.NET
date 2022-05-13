@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.Http;
-using System.Threading;
-using System.Threading.Tasks;
-using Aria2NET.Apis;
+﻿using Aria2NET.Apis;
 using Newtonsoft.Json;
 
 namespace Aria2NET;
@@ -33,7 +27,7 @@ public class Aria2NetClient
     /// <param name="retryCount">
     ///     Optional amount of tries a request should do before marking it as error.
     /// </param>
-    public Aria2NetClient(String aria2Url, String secret = null, HttpClient httpClient = null, Int32 retryCount = 0)
+    public Aria2NetClient(String aria2Url, String? secret = null, HttpClient? httpClient = null, Int32 retryCount = 0)
     {
         if (!aria2Url.EndsWith("/jsonrpc"))
         {
@@ -73,7 +67,7 @@ public class Aria2NetClient
     /// </param>
     /// <param name="cancellationToken"></param>
     /// <returns>The GID of the newly registered download</returns>
-    public async Task<String> AddUri(IList<String> uriList, IDictionary<String, Object> options = null, Int32? position = null, CancellationToken cancellationToken = default)
+    public async Task<String> AddUriAsync(IList<String> uriList, IDictionary<String, Object>? options = null, Int32? position = null, CancellationToken cancellationToken = default)
     {
         if (uriList == null || uriList.Count == 0)
         {
@@ -106,11 +100,11 @@ public class Aria2NetClient
     /// </param>
     /// <param name="cancellationToken"></param>
     /// <returns>The GID of the newly registered download.</returns>
-    public async Task<String> AddTorrent(Byte[] torrent,
-                                         IList<String> uriList = null,
-                                         IDictionary<String, Object> options = null,
-                                         Int32? position = null,
-                                         CancellationToken cancellationToken = default)
+    public async Task<String> AddTorrentAsync(Byte[] torrent,
+                                              IList<String>? uriList = null,
+                                              IDictionary<String, Object>? options = null,
+                                              Int32? position = null,
+                                              CancellationToken cancellationToken = default)
     {
         var torrentFile = Convert.ToBase64String(torrent);
 
@@ -125,7 +119,7 @@ public class Aria2NetClient
     /// </summary>
     /// <param name="cancellationToken"></param>
     /// <returns>The version and enabled features.</returns>
-    public async Task<VersionResult> GetVersion(CancellationToken cancellationToken = default)
+    public async Task<VersionResult> GetVersionAsync(CancellationToken cancellationToken = default)
     {
         return await _requests.GetRequestAsync<VersionResult>("aria2.getVersion", cancellationToken);
     }
@@ -146,10 +140,10 @@ public class Aria2NetClient
     /// </param>
     /// <param name="cancellationToken"></param>
     /// <returns>A list of GIDs of newly registered downloads.</returns>
-    public async Task<List<String>> AddMetalink(Byte[] torrent,
-                                                IDictionary<String, Object> options = null,
-                                                Int32? position = null,
-                                                CancellationToken cancellationToken = default)
+    public async Task<List<String>> AddMetalinkAsync(Byte[] torrent,
+                                                     IDictionary<String, Object>? options = null,
+                                                     Int32? position = null,
+                                                     CancellationToken cancellationToken = default)
     {
         var torrentFile = Convert.ToBase64String(torrent);
 
@@ -165,7 +159,7 @@ public class Aria2NetClient
     /// <param name="gid">The GID of the download.</param>
     /// <param name="cancellationToken"></param>
     /// <returns>The GID of removed download.</returns>
-    public async Task<String> Remove(String gid, CancellationToken cancellationToken = default)
+    public async Task<String> RemoveAsync(String gid, CancellationToken cancellationToken = default)
     {
         return await _requests.GetRequestAsync<String>("aria2.remove", cancellationToken, gid);
     }
@@ -178,7 +172,7 @@ public class Aria2NetClient
     /// <param name="gid">The GID of the download.</param>
     /// <param name="cancellationToken"></param>
     /// <returns>The GID of removed download.</returns>
-    public async Task<String> ForceRemove(String gid, CancellationToken cancellationToken = default)
+    public async Task<String> ForceRemoveAsync(String gid, CancellationToken cancellationToken = default)
     {
         return await _requests.GetRequestAsync<String>("aria2.forceRemove", cancellationToken, gid);
     }
@@ -191,7 +185,7 @@ public class Aria2NetClient
     /// <param name="gid">The GID of the download.</param>
     /// <param name="cancellationToken"></param>
     /// <returns>The GID of paused download.</returns>
-    public async Task<String> Pause(String gid, CancellationToken cancellationToken = default)
+    public async Task<String> PauseAsync(String gid, CancellationToken cancellationToken = default)
     {
         return await _requests.GetRequestAsync<String>("aria2.pause", cancellationToken, gid);
     }
@@ -201,7 +195,7 @@ public class Aria2NetClient
     /// </summary>
     /// <param name="cancellationToken"></param>
     /// <returns>True if successful.</returns>
-    public async Task<Boolean> PauseAll(CancellationToken cancellationToken = default)
+    public async Task<Boolean> PauseAllAsync(CancellationToken cancellationToken = default)
     {
         var result = await _requests.GetRequestAsync<String>("aria2.pauseAll", cancellationToken);
 
@@ -216,7 +210,7 @@ public class Aria2NetClient
     /// <param name="gid">The GID of the download.</param>
     /// <param name="cancellationToken"></param>
     /// <returns>The GID of paused download.</returns>
-    public async Task<String> ForcePause(String gid, CancellationToken cancellationToken = default)
+    public async Task<String> ForcePauseAsync(String gid, CancellationToken cancellationToken = default)
     {
         return await _requests.GetRequestAsync<String>("aria2.forcePause", cancellationToken, gid);
     }
@@ -226,7 +220,7 @@ public class Aria2NetClient
     /// </summary>
     /// <param name="cancellationToken"></param>
     /// <returns>True if successful.</returns>
-    public async Task<Boolean> ForcePauseAll(CancellationToken cancellationToken = default)
+    public async Task<Boolean> ForcePauseAllAsync(CancellationToken cancellationToken = default)
     {
         var result = await _requests.GetRequestAsync<String>("aria2.forcePauseAll", cancellationToken);
 
@@ -240,7 +234,7 @@ public class Aria2NetClient
     /// <param name="gid">The GID of the download.</param>
     /// <param name="cancellationToken"></param>
     /// <returns>The GID of unpaused download.</returns>
-    public async Task<String> Unpause(String gid, CancellationToken cancellationToken = default)
+    public async Task<String> UnpauseAsync(String gid, CancellationToken cancellationToken = default)
     {
         return await _requests.GetRequestAsync<String>("aria2.unpause", cancellationToken, gid);
     }
@@ -250,7 +244,7 @@ public class Aria2NetClient
     /// </summary>
     /// <param name="cancellationToken"></param>
     /// <returns>True if successful.</returns>
-    public async Task<Boolean> UnpauseAll(CancellationToken cancellationToken = default)
+    public async Task<Boolean> UnpauseAllAsync(CancellationToken cancellationToken = default)
     {
         var result = await _requests.GetRequestAsync<String>("aria2.unpauseAll", cancellationToken);
 
@@ -263,7 +257,7 @@ public class Aria2NetClient
     /// <param name="gid">The GID of the download.</param>
     /// <param name="cancellationToken"></param>
     /// <returns>Status of the download.</returns>
-    public async Task<DownloadStatusResult> TellStatus(String gid, CancellationToken cancellationToken = default)
+    public async Task<DownloadStatusResult> TellStatusAsync(String gid, CancellationToken cancellationToken = default)
     {
         return await _requests.GetRequestAsync<DownloadStatusResult>("aria2.tellStatus", cancellationToken, gid);
     }
@@ -274,7 +268,7 @@ public class Aria2NetClient
     /// <param name="gid">The GID of the download.</param>
     /// <param name="cancellationToken"></param>
     /// <returns>A list of urls.</returns>
-    public async Task<IList<UriResult>> GetUris(String gid, CancellationToken cancellationToken = default)
+    public async Task<IList<UriResult>> GetUrisAsync(String gid, CancellationToken cancellationToken = default)
     {
         return await _requests.GetRequestAsync<List<UriResult>>("aria2.getUris", cancellationToken, gid);
     }
@@ -285,7 +279,7 @@ public class Aria2NetClient
     /// <param name="gid">The GID of the download.</param>
     /// <param name="cancellationToken"></param>
     /// <returns>A list of files.</returns>
-    public async Task<IList<FileResult>> GetFiles(String gid, CancellationToken cancellationToken = default)
+    public async Task<IList<FileResult>> GetFilesAsync(String gid, CancellationToken cancellationToken = default)
     {
         return await _requests.GetRequestAsync<List<FileResult>>("aria2.getFiles", cancellationToken, gid);
     }
@@ -297,7 +291,7 @@ public class Aria2NetClient
     /// <param name="gid">The GID of the download.</param>
     /// <param name="cancellationToken"></param>
     /// <returns>A list of files.</returns>
-    public async Task<IList<PeerResult>> GetPeers(String gid, CancellationToken cancellationToken = default)
+    public async Task<IList<PeerResult>> GetPeersAsync(String gid, CancellationToken cancellationToken = default)
     {
         return await _requests.GetRequestAsync<List<PeerResult>>("aria2.getPeers", cancellationToken, gid);
     }
@@ -309,7 +303,7 @@ public class Aria2NetClient
     /// <param name="gid">The GID of the download.</param>
     /// <param name="cancellationToken"></param>
     /// <returns>A list of files.</returns>
-    public async Task<IList<ServerResult>> GetServers(String gid, CancellationToken cancellationToken = default)
+    public async Task<IList<ServerResult>> GetServersAsync(String gid, CancellationToken cancellationToken = default)
     {
         return await _requests.GetRequestAsync<List<ServerResult>>("aria2.getServers", cancellationToken, gid);
     }
@@ -327,7 +321,7 @@ public class Aria2NetClient
     /// <param name="how">The method of setting the new position.</param>
     /// <param name="cancellationToken"></param>
     /// <returns>The new position of the download in the queue.</returns>
-    public async Task<Int32> ChangePosition(String gid, Int32 pos, ChangePositionHow how, CancellationToken cancellationToken = default)
+    public async Task<Int32> ChangePositionAsync(String gid, Int32 pos, ChangePositionHow how, CancellationToken cancellationToken = default)
     {
         var howString = how switch
         {
@@ -345,7 +339,7 @@ public class Aria2NetClient
     /// </summary>
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
-    public async Task<IList<DownloadStatusResult>> TellActive(CancellationToken cancellationToken = default)
+    public async Task<IList<DownloadStatusResult>> TellActiveAsync(CancellationToken cancellationToken = default)
     {
         return await _requests.GetRequestAsync<List<DownloadStatusResult>>("aria2.tellActive", cancellationToken);
     }
@@ -362,7 +356,7 @@ public class Aria2NetClient
     /// <param name="num"></param>
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
-    public async Task<IList<DownloadStatusResult>> TellWaiting(Int32 offset, Int32 num, CancellationToken cancellationToken = default)
+    public async Task<IList<DownloadStatusResult>> TellWaitingAsync(Int32 offset, Int32 num, CancellationToken cancellationToken = default)
     {
         return await _requests.GetRequestAsync<List<DownloadStatusResult>>("aria2.tellWaiting", cancellationToken, offset, num);
     }
@@ -377,7 +371,7 @@ public class Aria2NetClient
     /// <param name="num"></param>
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
-    public async Task<IList<DownloadStatusResult>> TellStopped(Int32 offset, Int32 num, CancellationToken cancellationToken = default)
+    public async Task<IList<DownloadStatusResult>> TellStoppedAsync(Int32 offset, Int32 num, CancellationToken cancellationToken = default)
     {
         return await _requests.GetRequestAsync<List<DownloadStatusResult>>("aria2.tellStopped", cancellationToken, offset, num);
     }
@@ -387,7 +381,7 @@ public class Aria2NetClient
     /// </summary>
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
-    public async Task<IList<DownloadStatusResult>> TellAll(CancellationToken cancellationToken = default)
+    public async Task<IList<DownloadStatusResult>> TellAllAsync(CancellationToken cancellationToken = default)
     {
         var results = await _requests.MultiRequestAsync(cancellationToken, 
                                                         new Object[] { "aria2.tellStopped", 0, 1000 },
@@ -409,7 +403,7 @@ public class Aria2NetClient
     /// <param name="gid">The GID of the download.</param>
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
-    public async Task<IDictionary<String, String>> GetOption(String gid, CancellationToken cancellationToken = default)
+    public async Task<IDictionary<String, String>> GetOptionAsync(String gid, CancellationToken cancellationToken = default)
     {
         return await _requests.GetRequestAsync<Dictionary<String, String>>("aria2.getOption", cancellationToken, gid);
     }
@@ -433,12 +427,12 @@ public class Aria2NetClient
     /// <param name="position">The position of the URLs.</param>
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
-    public async Task<IList<String>> ChangeUri(String gid,
-                                               Int32 fileIndex,
-                                               IList<String> delUris,
-                                               IList<String> addUris,
-                                               Int32? position = null,
-                                               CancellationToken cancellationToken = default)
+    public async Task<IList<String>> ChangeUriAsync(String gid,
+                                                    Int32 fileIndex,
+                                                    IList<String> delUris,
+                                                    IList<String> addUris,
+                                                    Int32? position = null,
+                                                    CancellationToken cancellationToken = default)
     {
         return await _requests.GetRequestAsync<List<String>>("aria2.changeUri", cancellationToken, gid, fileIndex, delUris, addUris, position);
     }
@@ -467,7 +461,7 @@ public class Aria2NetClient
     /// </param>
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
-    public async Task ChangeOption(String gid, IDictionary<String, String> options, CancellationToken cancellationToken = default)
+    public async Task ChangeOptionAsync(String gid, IDictionary<String, String> options, CancellationToken cancellationToken = default)
     {
         await _requests.GetRequestAsync("aria2.changeOption", cancellationToken, gid, options);
     }
@@ -480,7 +474,7 @@ public class Aria2NetClient
     /// </summary>
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
-    public async Task<IDictionary<String, String>> GetGlobalOption(CancellationToken cancellationToken = default)
+    public async Task<IDictionary<String, String>> GetGlobalOptionAsync(CancellationToken cancellationToken = default)
     {
         return await _requests.GetRequestAsync<Dictionary<String, String>>("aria2.getGlobalOption", cancellationToken);
     }
@@ -507,7 +501,7 @@ public class Aria2NetClient
     /// </summary>
     /// <param name="options">The options to change.</param>
     /// <param name="cancellationToken"></param>
-    public async Task ChangeGlobalOption(IDictionary<String, String> options, CancellationToken cancellationToken = default)
+    public async Task ChangeGlobalOptionAsync(IDictionary<String, String> options, CancellationToken cancellationToken = default)
     {
         await _requests.GetRequestAsync("aria2.changeGlobalOption", cancellationToken, options);
     }
@@ -517,7 +511,7 @@ public class Aria2NetClient
     /// </summary>
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
-    public async Task PurgeDownloadResult(CancellationToken cancellationToken = default)
+    public async Task PurgeDownloadResultAsync(CancellationToken cancellationToken = default)
     {
         await _requests.GetRequestAsync("aria2.purgeDownloadResult", cancellationToken);
     }
@@ -528,7 +522,7 @@ public class Aria2NetClient
     /// <param name="gid">The GID of the download.</param>
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
-    public async Task RemoveDownloadResult(String gid, CancellationToken cancellationToken = default)
+    public async Task RemoveDownloadResultAsync(String gid, CancellationToken cancellationToken = default)
     {
         await _requests.GetRequestAsync("aria2.removeDownloadResult", cancellationToken, gid);
     }
@@ -543,7 +537,7 @@ public class Aria2NetClient
     /// </summary>
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
-    public async Task Shutdown(CancellationToken cancellationToken = default)
+    public async Task ShutdownAsync(CancellationToken cancellationToken = default)
     {
         await _requests.GetRequestAsync("aria2.shutdown", cancellationToken);
     }
@@ -554,7 +548,7 @@ public class Aria2NetClient
     /// </summary>
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
-    public async Task ForceShutdown(CancellationToken cancellationToken = default)
+    public async Task ForceShutdownAsync(CancellationToken cancellationToken = default)
     {
         await _requests.GetRequestAsync("aria2.forceShutdown", cancellationToken);
     }
@@ -564,7 +558,7 @@ public class Aria2NetClient
     /// </summary>
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
-    public async Task<GlobalStatResult> GetGlobalStat(CancellationToken cancellationToken = default)
+    public async Task<GlobalStatResult> GetGlobalStatAsync(CancellationToken cancellationToken = default)
     {
         return await _requests.GetRequestAsync<GlobalStatResult>("aria2.getGlobalStat", cancellationToken);
     }
@@ -574,7 +568,7 @@ public class Aria2NetClient
     /// </summary>
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
-    public async Task<IList<String>> SaveSession(CancellationToken cancellationToken = default)
+    public async Task<IList<String>> SaveSessionAsync(CancellationToken cancellationToken = default)
     {
         return await _requests.GetRequestAsync<List<String>>("aria2.saveSession", cancellationToken);
     }
