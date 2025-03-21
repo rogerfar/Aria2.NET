@@ -1,0 +1,53 @@
+name: Publish to NuGet
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-publish:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Increment latest version tag
+        shell: pwsh
+        run: |
+          git fetch --tags
+          $tags = git tag --sort=-v:refname | Where-Object { $_ -match '^\d+\.\d+\.\d+$' }
+      
+          $latestTag = $tags | Select-Object -First 1
+          $versionParts = $latestTag -split '\.'
+          if ($versionParts.Length -ne 3) {
+            Write-Error "Latest tag format is invalid: $latestTag"
+            exit 1
+          }
+          $versionParts[2] = [string]([int]$versionParts[2] + 1)
+          $newVersion = $versionParts -join '.'
+      
+          echo "NEXT_VERSION=$newVersion" | Out-File -Append -FilePath $Env:GITHUB_ENV
+          git config user.name "github-actions"
+          git config user.email "github-actions@github.com"
+          git tag $newVersion
+          git push origin $newVersion
+          Write-Output "Created and pushed new tag: $newVersion"
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: '9.0'
+
+      - name: Restore dependencies
+        run: dotnet restore Aria2NET/Aria2NET.csproj
+
+      - name: Build
+        run: dotnet build Aria2NET/Aria2NET.csproj -c Release --no-restore -p:Version=${{ env.NEXT_VERSION }} -p:AssemblyVersion=${{ env.NEXT_VERSION }}
+
+      - name: Pack NuGet package
+        run: dotnet pack Aria2NET/Aria2NET.csproj -c Release --no-build -p:Version=${{ env.NEXT_VERSION }} -p:AssemblyVersion=${{ env.NEXT_VERSION }}
+
+      - name: Push to NuGet
+        run: dotnet nuget push Aria2NET/bin/Release/*.nupkg --api-key ${{ secrets.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json
